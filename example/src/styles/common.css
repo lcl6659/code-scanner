@@ -1,0 +1,47 @@
+/* ==========================
+	COMMON CSS
+========================== */
+@font-face {
+  font-family: 'Jiliguala-Bold';
+  src: url(https://h5.jiliguala.com/thome_fonts/Jiliguala-Bold.ttf)
+      format('truetype'),
+    url(https://h5.jiliguala.com/thome_fonts/jiliguala-bold-webfont.svg)
+      format('svg'),
+    url(https://h5.jiliguala.com/thome_fonts/jiliguala-bold-webfont.woff)
+      format('woff'),
+    url(https://h5.jiliguala.com/thome_fonts/jiliguala-bold-webfont.woff2)
+      format('woff2'),
+    url(https://h5.jiliguala.com/thome_fonts/jiliguala-bold-webfont.eot)
+      format('eot');
+  font-weight: 500 900;
+}
+
+/* popup 弹框 */
+.rt-popup {
+  background: rgba(0, 0, 0, 0.7);
+  overflow: visible;
+  border-radius: 20px;
+}
+
+.rt-popup-cont {
+  position: relative;
+  width: 320px;
+  border-radius: 20px;
+}
+
+.van-picker.van-area .van-picker__cancel {
+  color: rgba(179, 179, 179, 1) !important;
+}
+
+.van-picker.van-area .van-picker__confirm {
+  color: rgba(38, 192, 123, 1) !important;
+}
+
+.van-popup.van-popup--bottom {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.item-page .van-popup{
+  overflow-y: inherit;
+}
