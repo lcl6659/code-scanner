@@ -21,6 +21,32 @@ function removeDir (path) {
   }
 }
 
-module.exports = {
-  removeDir: removeDir
+// 找出js文件及其对应的map文件
+function findJsAndMap (path, fileObj = {}) {
+  try {
+    fs.accessSync(path)
+    var files = fs.readdirSync(path);
+    files.forEach(function (file, index) {
+      var curPath = path +"/" + file;
+      if (fs.statSync(curPath).isDirectory()) { // 文件夹
+        fileObj = findJsAndMap(curPath, fileObj)
+      } else { // 文件
+        if (file.endsWith('.js')) {
+          fileObj.jsObj[file] = curPath
+        }
+        if (file.endsWith('.map')) {
+          fileObj.mapObj[file] = curPath
+        }
+      }
+    })
+    return fileObj
+  } catch (error) {
+    console.log(error)
+  }
 }
+
+module.exports = {
+  removeDir: removeDir,
+  findJsAndMap: findJsAndMap
+}
+

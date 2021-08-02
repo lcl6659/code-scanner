@@ -12,6 +12,8 @@ const webpackConfig = merge(baseWebpackConfig, mergeWebpackConfig)
 class CodeScanner {
   run (basePath) {
 
+    console.log('webpackConfig.out', webpackConfig.output)
+
     global.basePath = basePath
 
     // 删除babel缓存
@@ -23,7 +25,8 @@ class CodeScanner {
     const compiler = webpack(webpackConfig)
     
     new WebpackRunDonePlugin({
-      basePath: basePath
+      basePath: basePath,
+      buildOutPath: webpackConfig.output.path // 打包后的输出文件夹 /Users/jlgl/Documents/workSpace/code-scanner/example/build/share
     }).apply(compiler)
 
     new ChunkSizePlugin({

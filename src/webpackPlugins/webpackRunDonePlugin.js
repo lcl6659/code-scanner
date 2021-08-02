@@ -1,9 +1,11 @@
-const pluginName = 'webpackRunDonePlugin';
+const BabelSanner = require('../scanBuildCode/index')
 
+const pluginName = 'webpackRunDonePlugin'
 class WebpackRunDonePlugin {
-  constructor({basePath}){
+  constructor({basePath, buildOutPath}){
     // 传入的参数挂载在这个类的实例上.
     this.basePath = basePath
+    this.buildOutPath = buildOutPath
   }
   apply(compiler) {
 
@@ -13,6 +15,12 @@ class WebpackRunDonePlugin {
 
     compiler.hooks.done.tap(pluginName, (stats) => {
       console.log('********************myTestWebpackPlugins 构建结束！********************')
+      setTimeout(() => {
+        const bs = new BabelSanner({
+          buildOutPath: this.buildOutPath
+        })
+        bs.run()
+      }, 3000)
     })
   }
 }

@@ -4,12 +4,18 @@ var webpack = require('webpack');
 var fs = require('fs');
 var baseWebpackConfig = require('@vue/cli-service/webpack.config');
 require('path');
+var parser = require('@babel/parser');
+var traverse = require('@babel/traverse');
+var types$1 = require('@babel/types');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var webpack__default = /*#__PURE__*/_interopDefaultLegacy(webpack);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var baseWebpackConfig__default = /*#__PURE__*/_interopDefaultLegacy(baseWebpackConfig);
+var parser__default = /*#__PURE__*/_interopDefaultLegacy(parser);
+var traverse__default = /*#__PURE__*/_interopDefaultLegacy(traverse);
+var types__default = /*#__PURE__*/_interopDefaultLegacy(types$1);
 
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -1235,10 +1241,41 @@ function removeDir(path) {
   } catch (error) {
     console.log(error);
   }
+} // 找出js文件及其对应的map文件
+
+
+function findJsAndMap(path) {
+  var fileObj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  try {
+    fs__default['default'].accessSync(path);
+    var files = fs__default['default'].readdirSync(path);
+    files.forEach(function (file, index) {
+      var curPath = path + "/" + file;
+
+      if (fs__default['default'].statSync(curPath).isDirectory()) {
+        // 文件夹
+        fileObj = findJsAndMap(curPath, fileObj);
+      } else {
+        // 文件
+        if (file.endsWith('.js')) {
+          fileObj.jsObj[file] = curPath;
+        }
+
+        if (file.endsWith('.map')) {
+          fileObj.mapObj[file] = curPath;
+        }
+      }
+    });
+    return fileObj;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 var util = {
-  removeDir: removeDir
+  removeDir: removeDir,
+  findJsAndMap: findJsAndMap
 };
 
 var logFilePath = '/codeScannerLog/log.js';
@@ -1315,10 +1352,10 @@ var customPlugin = function customPlugin(babel) {
         var prop = path.node.callee.property; // const arguments = path.node.arguments
 
         if (t.isIdentifier(obj) && t.isIdentifier(prop) && obj.name === 'console' && prop.name === 'log') {
-          var location = "---trace: line ".concat(path.node.loc.start.line, ", column ").concat(path.node.loc.start.column, ", ").concat(state.filename, "---"); // arguments.push(t.stringLiteral(location))
-
-          console.log(location);
-          console.log('********************写入日志文件*******************');
+          // const location = `---trace: line ${path.node.loc.start.line}, column ${path.node.loc.start.column}, ${state.filename}---`;
+          // arguments.push(t.stringLiteral(location))
+          // console.log(location)
+          // console.log('********************写入日志文件*******************')
           logs = logs + '\n' + JSON.stringify({
             line: path.node.loc.start.line,
             column: path.node.loc.start.column,
@@ -1350,26 +1387,98 @@ var merge_webpack_config = {
   }
 };
 
+var BabelSanner = /*#__PURE__*/function () {
+  function BabelSanner(data) {
+    _classCallCheck(this, BabelSanner);
+
+    this.buildOutPath = data.buildOutPath;
+  } // 运行扫描
+
+
+  _createClass(BabelSanner, [{
+    key: "run",
+    value: function run() {
+      var _this = this;
+
+      console.log("-------开始执行扫描打包后的js-------");
+      var fileObj = util.findJsAndMap(this.buildOutPath, {
+        jsObj: {},
+        mapObj: {}
+      });
+      var jsNames = Object.keys(fileObj.jsObj);
+      jsNames.forEach(function (jsName) {
+        var jsPath = fileObj.jsObj[jsName];
+        var jsMapPath = fileObj.mapObj[jsName + '.map'];
+
+        _this.parseAndTraverseJsFile(jsPath, jsMapPath);
+      });
+      console.log(JSON.stringify(fileObj));
+    } // 解析js文件
+
+  }, {
+    key: "parseAndTraverseJsFile",
+    value: function parseAndTraverseJsFile(jsPath, jsMapPath) {
+      console.log('----解析js文件---');
+      var sourceCode = fs__default['default'].readFileSync(jsPath, {
+        encoding: 'utf-8'
+      }); // 第一步：生成AST
+
+      var ast = parser__default['default'].parse(sourceCode, {
+        sourceType: 'unambiguous' // 根据内容是否有 import 和 export 来确定是否解析 es module 语法
+
+      }); // console.log(ast.program.body)
+      // 第二步：遍历 AST
+
+      traverse__default['default'](ast, {
+        CallExpression: function CallExpression(path, state) {
+          var obj = path.node.callee.object;
+          var prop = path.node.callee.property; // const arguments = path.node.arguments
+
+          if (types__default['default'].isIdentifier(obj) && types__default['default'].isIdentifier(prop) && obj.name === 'console' && prop.name === 'log') {
+            var location = "---out: line ".concat(path.node.loc.start.line, ", column ").concat(path.node.loc.start.column, ", ").concat(jsPath, "---"); // arguments.push(t.stringLiteral(location))
+
+            console.log(location);
+          }
+        }
+      });
+    }
+  }]);
+
+  return BabelSanner;
+}();
+
+var scanBuildCode = BabelSanner;
+
 var pluginName = 'webpackRunDonePlugin';
 
 var WebpackRunDonePlugin = /*#__PURE__*/function () {
   function WebpackRunDonePlugin(_ref) {
-    var basePath = _ref.basePath;
+    var basePath = _ref.basePath,
+        buildOutPath = _ref.buildOutPath;
 
     _classCallCheck(this, WebpackRunDonePlugin);
 
     // 传入的参数挂载在这个类的实例上.
     this.basePath = basePath;
+    this.buildOutPath = buildOutPath;
   }
 
   _createClass(WebpackRunDonePlugin, [{
     key: "apply",
     value: function apply(compiler) {
+      var _this = this;
+
       compiler.hooks.run.tap(pluginName, function (compilation) {
         console.log('********************myTestWebpackPlugins 构建过程开始！********************');
       });
       compiler.hooks.done.tap(pluginName, function (stats) {
         console.log('********************myTestWebpackPlugins 构建结束！********************');
+        setTimeout(function () {
+          var bs = new scanBuildCode({
+            buildOutPath: _this.buildOutPath
+          });
+          bs.run();
+        }, 3000);
       });
     }
   }]);
@@ -1440,6 +1549,7 @@ var CodeScanner = /*#__PURE__*/function () {
   _createClass(CodeScanner, [{
     key: "run",
     value: function run(basePath) {
+      console.log('webpackConfig.out', webpackConfig.output);
       commonjsGlobal.basePath = basePath; // 删除babel缓存
 
       util.removeDir("".concat(basePath, "/node_modules/.cache/babel-loader")); // 创建扫描日志目录
@@ -1447,7 +1557,9 @@ var CodeScanner = /*#__PURE__*/function () {
       createLog.createDir(basePath);
       var compiler = webpack__default['default'](webpackConfig);
       new webpackRunDonePlugin({
-        basePath: basePath
+        basePath: basePath,
+        buildOutPath: webpackConfig.output.path // 打包后的输出文件夹 /Users/jlgl/Documents/workSpace/code-scanner/example/build/share
+
       }).apply(compiler);
       new chunkSizePlugin({
         filename: "chunkSize.js",
