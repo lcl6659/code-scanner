@@ -28,9 +28,9 @@ module.exports = function (babel) {
           if (!line || !column) {
             return
           }
-          const location = `---trace: line ${line}, column ${column}, ${state.filename}---`;
+          /* const location = `---trace: line ${line}, column ${column}, ${state.filename}---`;
           console.log(location)
-          console.log('********************写入日志文件*******************')
+          console.log('********************写入日志文件*******************') */
           logs = logs + '\n' + JSON.stringify({
             line: line,
             column: column,

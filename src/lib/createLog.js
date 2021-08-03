@@ -3,8 +3,6 @@
 */
 
 const fs = require('fs')
-const path = require('path')
-
 const logFilePath = '/codeScannerLog/log.js'
 const logFileDirPath = '/codeScannerLog'
 

@@ -12,10 +12,10 @@ module.exports = function (babel) {
         const prop = path.node.callee.property
         // const arguments = path.node.arguments
         if (t.isIdentifier(obj) && t.isIdentifier(prop) && obj.name === 'console' && prop.name === 'log') {
-          const location = `---trace: line ${path.node.loc.start.line}, column ${path.node.loc.start.column}, ${state.filename}---`;
+          // const location = `---trace: line ${path.node.loc.start.line}, column ${path.node.loc.start.column}, ${state.filename}---`;
           // arguments.push(t.stringLiteral(location))
-          console.log(location)
-          console.log('********************写入日志文件*******************')
+          // console.log(location)
+          // console.log('********************写入日志文件*******************')
 
           logs = logs + '\n' + JSON.stringify({
             line: path.node.loc.start.line,
