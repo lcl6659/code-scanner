@@ -1,3 +1,4 @@
+const fs = require('fs')
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 const util = require('./lib/util')
@@ -15,7 +16,10 @@ class CodeScanner {
     global.basePath = basePath
 
     // 删除babel缓存
-    util.removeDir(`${basePath}/node_modules/.cache/babel-loader`)
+    const babelLoaderCachePath = `${basePath}/node_modules/.cache/babel-loader`
+    if (fs.existsSync(babelLoaderCachePath)) {
+      util.removeDir(babelLoaderCachePath)
+    }
 
     // 创建扫描日志目录
     createLog.createDir(basePath)
