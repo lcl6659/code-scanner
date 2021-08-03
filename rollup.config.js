@@ -10,8 +10,19 @@ module.exports = [
     input: 'src/index.js',
     output: {
       file: `lib/index.js`,
-      format: "cjs",
-      name: exportSdknName // 全局变量名称
+      format: "umd",
+      sourcemap: true,
+      name: exportSdknName, // 全局变量名称
+      globals: { // 这跟external 是配套使用的，确定外部引入的全局变量名称
+        'webpack': 'webpack',
+        'fs': 'fs',
+        'path': 'path',
+        'source-map': 'sourceMap',
+        '@vue/cli-service/webpack.config': 'baseWebpackConfig',
+        '@babel/parser': 'babelParser',
+        '@babel/traverse': 'babelTraverse',
+        '@babel/types': 'babelTypes'
+      }
     },
     plugins: [
       resolve(), 
@@ -25,8 +36,19 @@ module.exports = [
     input: 'src/index.js',
     output: {
       file: `example/codeScanner/index.js`,
-      format: "cjs",
-      name: exportSdknName // 全局变量名称
+      format: "umd",
+      sourcemap: true,
+      name: exportSdknName, // 全局变量名称
+      globals: {
+        'webpack': 'webpack',
+        'fs': 'fs',
+        'path': 'path',
+        'source-map': 'sourceMap',
+        '@vue/cli-service/webpack.config': 'baseWebpackConfig',
+        '@babel/parser': 'babelParser',
+        '@babel/traverse': 'babelTraverse',
+        '@babel/types': 'babelTypes'
+      }
     },
     plugins: [
       resolve(), 
