@@ -1,4 +1,5 @@
 const customPlugin = require('../babelPlugins/customPlugin')
+const variousPlugin = require('../babelPlugins/various.customPlg')
 
 module.exports = {
   mode: 'development',
@@ -11,7 +12,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: [customPlugin],
+            plugins: [customPlugin, variousPlugin],
             cacheDirectory: false,
             cacheCompression: false
           }
