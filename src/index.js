@@ -12,8 +12,6 @@ const webpackConfig = merge(baseWebpackConfig, mergeWebpackConfig)
 class CodeScanner {
   run (basePath) {
 
-    console.log('webpackConfig.out', webpackConfig.output)
-
     global.basePath = basePath
 
     // 删除babel缓存
