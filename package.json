@@ -20,6 +20,7 @@
     "core-js": "3",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
+    "source-map": "^0.7.3",
     "webpack-merge": "^5.8.0"
   },
   "devDependencies": {

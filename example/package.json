@@ -68,6 +68,7 @@
     "pug": "^3.0.0",
     "pug-plain-loader": "^1.0.0",
     "remove-files-webpack-plugin": "^1.4.4",
+    "source-map": "^0.7.3",
     "vue-template-compiler": "^2.6.10",
     "webpack-merge": "^5.8.0"
   },

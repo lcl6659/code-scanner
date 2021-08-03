@@ -2,7 +2,6 @@ const parser = require('@babel/parser')
 const traverse = require('@babel/traverse') // 因为 @babel/parser 等包都是通过 es module 导出的，所以通过 commonjs 的方式引入有的时候要取 default 属性
 const types = require('@babel/types')
 const fs = require('fs')
-const path = require('path')
 const util = require('../lib/util')
 
 
@@ -38,6 +37,10 @@ class BabelSanner {
       encoding: 'utf-8'
     })
 
+    const sourceMapCode = fs.readFileSync(jsMapPath, {
+      encoding: 'utf-8'
+    })
+
     // 第一步：生成AST
     const ast = parser.parse(sourceCode, {
       sourceType: 'unambiguous' // 根据内容是否有 import 和 export 来确定是否解析 es module 语法
@@ -52,9 +55,13 @@ class BabelSanner {
         const prop = path.node.callee.property
         // const arguments = path.node.arguments
         if (types.isIdentifier(obj) && types.isIdentifier(prop) && obj.name === 'console' && prop.name === 'log') {
-          const location = `---out: line ${path.node.loc.start.line}, column ${path.node.loc.start.column}, ${jsPath}---`;
           // arguments.push(t.stringLiteral(location))
-          console.log(location)
+          util.getBuildCodeLocationInSourceCode(sourceMapCode, path.node.loc.start.line, path.node.loc.start.column, (originCodeInfo) => {
+            const location = `---out: line ${path.node.loc.start.line}, column ${path.node.loc.start.column}, ${jsPath}---`;
+            console.log(location)
+            console.log('---originCodeInfo---:', JSON.stringify(originCodeInfo))
+            console.log('**************************************8')
+          })
         }
       }
     })

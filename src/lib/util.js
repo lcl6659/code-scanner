@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { SourceMapConsumer } = require('source-map')
 
 // 删除目录
 function removeDir (path) {
@@ -45,8 +46,23 @@ function findJsAndMap (path, fileObj = {}) {
   }
 }
 
+// 找到打包后的代码在源码中的位置
+function getBuildCodeLocationInSourceCode (sourceMapCode, line, column, cb) {
+  SourceMapConsumer.with(sourceMapCode, null, consumer => {
+    // 目标代码位置查询源码位置
+    const p = consumer.originalPositionFor({
+     line: line,
+     column: column
+    })
+    // p的格式:  {"source":"webpack:///node_modules/components/lib/InsideLogin/index.js","line":8462,"column":0,"name":null}
+    //          {"source":"webpack:///src/pages/GeneralPage/GeneralAddress/index.vue","line":155,"column":0,"name":null}
+    cb && cb(p)
+  })
+}
+
 module.exports = {
   removeDir: removeDir,
-  findJsAndMap: findJsAndMap
+  findJsAndMap: findJsAndMap,
+  getBuildCodeLocationInSourceCode: getBuildCodeLocationInSourceCode
 }
 

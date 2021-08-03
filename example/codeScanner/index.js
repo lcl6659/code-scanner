@@ -2,8 +2,8 @@
 
 var webpack = require('webpack');
 var fs = require('fs');
+var require$$0 = require('source-map');
 var baseWebpackConfig = require('@vue/cli-service/webpack.config');
-require('path');
 var parser = require('@babel/parser');
 var traverse = require('@babel/traverse');
 var types$1 = require('@babel/types');
@@ -12,6 +12,7 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 
 var webpack__default = /*#__PURE__*/_interopDefaultLegacy(webpack);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
+var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 var baseWebpackConfig__default = /*#__PURE__*/_interopDefaultLegacy(baseWebpackConfig);
 var parser__default = /*#__PURE__*/_interopDefaultLegacy(parser);
 var traverse__default = /*#__PURE__*/_interopDefaultLegacy(traverse);
@@ -1220,6 +1221,8 @@ var dist = createCommonjsModule(function (module, exports) {
   exports.customizeObject = customizeObject;
 });
 
+var SourceMapConsumer = require$$0__default['default'].SourceMapConsumer; // 删除目录
+
 function removeDir(path) {
   try {
     fs__default['default'].accessSync(path);
@@ -1271,11 +1274,26 @@ function findJsAndMap(path) {
   } catch (error) {
     console.log(error);
   }
+} // 找到打包后的代码在源码中的位置
+
+
+function getBuildCodeLocationInSourceCode(sourceMapCode, line, column, cb) {
+  SourceMapConsumer["with"](sourceMapCode, null, function (consumer) {
+    // 目标代码位置查询源码位置
+    var p = consumer.originalPositionFor({
+      line: line,
+      column: column
+    }); // p的格式:  {"source":"webpack:///node_modules/components/lib/InsideLogin/index.js","line":8462,"column":0,"name":null}
+    //          {"source":"webpack:///src/pages/GeneralPage/GeneralAddress/index.vue","line":155,"column":0,"name":null}
+
+    cb && cb(p);
+  });
 }
 
 var util = {
   removeDir: removeDir,
-  findJsAndMap: findJsAndMap
+  findJsAndMap: findJsAndMap,
+  getBuildCodeLocationInSourceCode: getBuildCodeLocationInSourceCode
 };
 
 var logFilePath = '/codeScannerLog/log.js';
@@ -1411,8 +1429,7 @@ var BabelSanner = /*#__PURE__*/function () {
         var jsMapPath = fileObj.mapObj[jsName + '.map'];
 
         _this.parseAndTraverseJsFile(jsPath, jsMapPath);
-      });
-      console.log(JSON.stringify(fileObj));
+      }); // console.log(JSON.stringify(fileObj))
     } // 解析js文件
 
   }, {
@@ -1420,6 +1437,9 @@ var BabelSanner = /*#__PURE__*/function () {
     value: function parseAndTraverseJsFile(jsPath, jsMapPath) {
       console.log('----解析js文件---');
       var sourceCode = fs__default['default'].readFileSync(jsPath, {
+        encoding: 'utf-8'
+      });
+      var sourceMapCode = fs__default['default'].readFileSync(jsMapPath, {
         encoding: 'utf-8'
       }); // 第一步：生成AST
 
@@ -1435,9 +1455,13 @@ var BabelSanner = /*#__PURE__*/function () {
           var prop = path.node.callee.property; // const arguments = path.node.arguments
 
           if (types__default['default'].isIdentifier(obj) && types__default['default'].isIdentifier(prop) && obj.name === 'console' && prop.name === 'log') {
-            var location = "---out: line ".concat(path.node.loc.start.line, ", column ").concat(path.node.loc.start.column, ", ").concat(jsPath, "---"); // arguments.push(t.stringLiteral(location))
-
-            console.log(location);
+            // arguments.push(t.stringLiteral(location))
+            util.getBuildCodeLocationInSourceCode(sourceMapCode, path.node.loc.start.line, path.node.loc.start.column, function (originCodeInfo) {
+              var location = "---out: line ".concat(path.node.loc.start.line, ", column ").concat(path.node.loc.start.column, ", ").concat(jsPath, "---");
+              console.log(location);
+              console.log('---originCodeInfo---:', JSON.stringify(originCodeInfo));
+              console.log('**************************************8');
+            });
           }
         }
       });

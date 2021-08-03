@@ -19,7 +19,7 @@ module.exports = [
       json(),
       babel({ babelHelpers: 'bundled' })
     ],
-    external: ['webpack', '@vue/cli-service/webpack.config', 'fs', 'path', '@babel/core', '@babel/parser', '@babel/traverse', '@babel/types']
+    external: ['webpack', '@vue/cli-service/webpack.config', 'fs', 'path', '@babel/core', '@babel/parser', '@babel/traverse', '@babel/types', 'source-map']
   },
   {
     input: 'src/index.js',
@@ -34,6 +34,6 @@ module.exports = [
       json(),
       babel({ babelHelpers: 'bundled' })
     ],
-    external: ['webpack', '@vue/cli-service/webpack.config', 'fs', 'path', '@babel/core', '@babel/parser', '@babel/traverse', '@babel/types']
+    external: ['webpack', '@vue/cli-service/webpack.config', 'fs', 'path', '@babel/core', '@babel/parser', '@babel/traverse', '@babel/types', 'source-map']
   }
 ]
