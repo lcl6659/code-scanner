@@ -1,5 +1,6 @@
 const createLog = require('../lib/createLog')
 
+// 找出代码中，console.log 位置
 module.exports = function (babel) {
   console.log('********************：babel插件开始执行*******************')
   var logs = '['

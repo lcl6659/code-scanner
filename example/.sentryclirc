@@ -1,6 +1,0 @@
-[auth]
-token=9df900e5ee1c4737a29a0c5836cfd8a2f71be9bfcc0d4c21aabdd2bc2da6d327 
-[defaults]
-url=https://sentry.jiliguala.com/
-org=jiliguala
-project=store-99

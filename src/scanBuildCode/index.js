@@ -60,7 +60,7 @@ class BabelSanner {
             const location = `---out: line ${path.node.loc.start.line}, column ${path.node.loc.start.column}, ${jsPath}---`;
             console.log(location)
             console.log('---originCodeInfo---:', JSON.stringify(originCodeInfo))
-            console.log('**************************************8')
+            console.log('**************************************')
           })
         }
       }

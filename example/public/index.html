@@ -1,157 +1,17 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="">
   <head>
-    <meta charset="utf-8" />
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="叽里呱啦,宝贝英语,磨耳朵,英语启蒙,宝贝英语启蒙,Ji Li Gua La"
-    />
-    <meta property="og:description" content="宝贝英语,英语启蒙,磨耳朵,宝贝英语启蒙,child,kid" />
-    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-    />
-    <title></title>
-    <meta name="keywords" content="宝贝英语,英语启蒙,磨耳朵,宝贝英语启蒙,child,kid" />
-    <meta
-      name="description"
-      content="叽里呱啦,宝贝英语,磨耳朵,英语启蒙,宝贝英语启蒙,Ji Li Gua La"
-    />
-    <meta http-equiv="Cache-control" content="no-store" />
-    <meta http-equiv="Cache-control" content="no-cache" />
-    <meta name="apple-mobile-web-app-title" content="叽里呱啦" />
-    <meta
-      name="apple-itunes-app"
-      content="app-id=928864273, affiliate-data=pt=1522686&amp;ct=smartbanner, app-argument=h5preview"
-    />
-    <meta name="application-name" content="叽里呱啦" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#ffffff" />
-    <meta name="fragment" content="!" />
-    <meta name="baidu-site-verification" content="r4mhukFHkd" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
-    <script src="https://gaeacdn.jiliguala.com/jlgl/static/vue~vuex~vue-router~axios.min.js"></script>
-    <script src="//qiniucdn.jiliguala.com/dev/promo/307030c0aa664fbcb1d18f668ea03953.js"></script>
-    <script src="//qiniucdn.jiliguala.com/dev/promo/3cde111a33fa47ca968c7ec48efe7b03.js"></script>
-    <!-- 吆喝cdn -->
-    <script src="https://sdk.appadhoc.com/ab.plus.js"></script>
-    <!--在header标签引入，因为内部引入ARMS sdk作了异步,入口的包很小，且越早引入越好，收集加载时产生的错误 -->
-    <script src="https://gaeacdn.jiliguala.com/jlgl/eshop/assets/jgMonitor/JGMonitor.umd_sdk1.0.js"></script>
-    <!-- sentry初始化 -->
-    <script>
-      ;(function () {
-        Sentry.init({
-          dsn: 'https://043bed16175b479f9cf97eaad07dd927@sentry.jiliguala.com/2',
-          integrations: [new Sentry.Integrations.Vue()],
-          release: '<%= process.env.RELEASE %>',
-          environment:
-            '<%= process.env.VUE_APP_ENV === "production" ? "production" : "development" %>',
-        })
-      }.call(this))
-    </script>
-    <!--项目使用Vue，需在之后引入，否则无法拦截Vue抛出的错误 -->
-    <script>
-      const envMap = {
-        development: 'development',
-        fat: 'fat',
-        prerelease: 'rc',
-        production: 'prod',
-      }
-      const env = envMap['<%= process.env.VUE_APP_ENV %>'] || 'local'
-      //不要在window.onload之后初始化，因为ARMS sdk根据options初始化是在onload之前
-      JGMonitor.init({
-        Vue: window.Vue, //vue作为框架传入,为了解决vue错误收集一些兼容性问题。其他应用框架比如react和angular目前不用传入
-        pid: 'douziy9aji@d314ef2f224b55e',
-        environment: env,
-        enableSPA: true, //是否是spa项目
-        enableHook: true, //默认true,api每次请求是否上报，统计api成功率。默认true，禁止上报
-      })
-      var userInfo = localStorage && localStorage.getItem('store_user')
-      try {
-        userInfo && JGMonitor.setUsername(JSON.parse(userInfo)._id)
-      } catch (error) {
-        JGMonitor.captureException(error)
-      }
-    </script>
-    <!-- 控制台 -->
-    <script>
-      ;(function () {
-        var src = 'https://gaeacdn.jiliguala.com/jlgl/store/eruda.min.js'
-        if (/dev(spa)?\./.test(window.location) || /mode=debug/.test(window.location)) {
-          if (localStorage.getItem('active-eruda') === 'true') return
-          document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>')
-          document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>')
-        }
-      })()
-      // 强制禁止用户修改微信客户端的字体大小
-      ;(function () {
-        if (typeof WeixinJSBridge == 'object' && typeof WeixinJSBridge.invoke == 'function') {
-          handleFontSize()
-        } else {
-          if (document.addEventListener) {
-            document.addEventListener('WeixinJSBridgeReady', handleFontSize, false)
-          } else if (document.attachEvent) {
-            document.attachEvent('WeixinJSBridgeReady', handleFontSize)
-            document.attachEvent('onWeixinJSBridgeReady', handleFontSize)
-          }
-        }
-        function handleFontSize() {
-          // 设置网页字体为默认大小
-          WeixinJSBridge.invoke('setFontSizeCallback', { fontSize: 0 })
-          // 重写设置网页字体大小的事件
-          WeixinJSBridge.on('menu:setfont', function () {
-            WeixinJSBridge.invoke('setFontSizeCallback', { fontSize: 0 })
-          })
-        }
-      })()
-    </script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
-
   <body>
     <noscript>
-      <strong
-        >We're sorry but store doesn't work properly without JavaScript enabled. Please enable it to
-        continue.</strong
-      >
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <style>
-      .loading {
-        position: fixed;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        margin: auto;
-      }
-    </style>
-    <div id="root">
-      <img
-        class="loading"
-        src="https://gaeacdn.jiliguala.com/devjlgl/tmp/64812df4fadea6d3bc9ec874818d660f.svg"
-      />
-    </div>
-    <!-- 白屏时间监控 -->
-    <script>
-      const config = {
-        project: 'store', // 项目名称
-        // rate: 0.5, // 采样率 0 ～ 1, 默认为1
-        rate: 1, // 采样率 0 ～ 1, 默认为1
-        env: '<%= process.env.VUE_APP_ENV === "production" ? "prod" : "dev" %>', // 环境（dev | prod）， 默认为prod
-      }
-      document.write(
-        '<script src="https://gaeacdn.jiliguala.com/jlgl/static/perf-monitor/perf-monitor.0.1.19.js' +
-          '?t=' +
-          +new Date() +
-          '" crossorigin="anonymous"></scr' +
-          'ipt><script>PerfMonitor.init(' +
-          JSON.stringify(config) +
-          ');</scr' +
-          'ipt>'
-      )
-    </script>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
   </body>
 </html>
